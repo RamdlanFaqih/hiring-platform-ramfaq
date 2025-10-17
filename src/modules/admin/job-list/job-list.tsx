@@ -4,16 +4,24 @@ import PromoCard from '@/components/promo-card'
 import { Search } from 'lucide-react'
 import React from 'react'
 
+type JobCardProps = {
+    id: number;
+    status: string;
+    statusColor: string;
+    startDate: string;
+    title: string;
+    salary: string;
+}
 const JobList = () => {
-    const jobs = [
-        {
-            id: 1,
-            status: "Active",
-            statusColor: "bg-[#F8FBF9] text-[#43936c]",
-            startDate: "started on 1 Oct 2025",
-            title: "Front End Developer",
-            salary: "Rp7.000.000 - Rp8.000.000",
-        },
+    const jobs: JobCardProps[] = [
+        // {
+        //     id: 1,
+        //     status: "Active",
+        //     statusColor: "bg-[#F8FBF9] text-[#43936c]",
+        //     startDate: "started on 1 Oct 2025",
+        //     title: "Front End Developer",
+        //     salary: "Rp7.000.000 - Rp8.000.000",
+        // },
     ]
     return (
         <div className="min-h-screen bg-[#f8fbf9]">
@@ -34,7 +42,7 @@ const JobList = () => {
                         <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#01959f] w-5 h-5" />
                     </div>
                     <div className="space-y-4">
-                        {jobs ? (
+                        {jobs.length > 0 ? (
                             jobs.map((job) => (
                                 <JobCard key={job.id} job={job} />
                             ))
