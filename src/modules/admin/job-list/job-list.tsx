@@ -1,8 +1,11 @@
+'use client'
+
 import JobCard from '@/components/job-card'
+import JobCreateForm from '@/components/job-create-form'
 import JobEmpty from '@/components/job-empty'
 import PromoCard from '@/components/promo-card'
 import { Search } from 'lucide-react'
-import React from 'react'
+import React, { useState } from 'react'
 
 type JobCardProps = {
     id: number;
@@ -13,6 +16,7 @@ type JobCardProps = {
     salary: string;
 }
 const JobList = () => {
+    const [open, setOpen] = useState(false)
     const jobs: JobCardProps[] = [
         // {
         //     id: 1,
@@ -47,7 +51,7 @@ const JobList = () => {
                                 <JobCard key={job.id} job={job} />
                             ))
                         ) : (
-                            <JobEmpty />
+                            <JobEmpty onOpenChange={setOpen} />
                         )}
                     </div>
                 </div>
@@ -56,6 +60,7 @@ const JobList = () => {
                 </div>
             </div>
             <div className="fixed right-0 top-0 bottom-0 w-1 bg-[#01959f]" />
+            {open && <JobCreateForm isOpen={open} onOpenChange={setOpen} />}
         </div>
     )
 }
