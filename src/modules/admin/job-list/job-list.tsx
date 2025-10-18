@@ -56,7 +56,7 @@ const JobList = () => {
                     </div>
                 </div>
                 <div className="w-80">
-                    <PromoCard />
+                    <PromoCard onOpenChange={setOpen} />
                 </div>
             </div>
             {open && <JobCreateForm isOpen={open} onOpenChange={setOpen} />}

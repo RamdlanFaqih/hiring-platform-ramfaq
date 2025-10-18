@@ -35,7 +35,7 @@ const initialFields: ProfileField[] = [
   { id: "photo", label: "Photo Profile", requirement: "mandatory" },
   { id: "gender", label: "Gender", requirement: "mandatory" },
   { id: "domicile", label: "Domicile", requirement: "mandatory" },
-  { id: "email", label: "Email", requirement: "mandatory" },
+  { id: "email", label: "Email", requirement: "mandatory", disabledOptions: ["optional", "off"] },
   { id: "phone", label: "Phone number", requirement: "mandatory" },
   { id: "linkedin", label: "Linkedin link", requirement: "mandatory" },
   { id: "dob", label: "Date of birth", requirement: "mandatory" },
