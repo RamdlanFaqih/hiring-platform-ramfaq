@@ -59,7 +59,6 @@ const JobList = () => {
                     <PromoCard />
                 </div>
             </div>
-            <div className="fixed right-0 top-0 bottom-0 w-1 bg-[#01959f]" />
             {open && <JobCreateForm isOpen={open} onOpenChange={setOpen} />}
         </div>
     )
