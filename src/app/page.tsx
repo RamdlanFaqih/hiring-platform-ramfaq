@@ -1,10 +1,11 @@
-import CandidateJobList from '@/modules/candidate/job-list/candidate-job-list'
+import LoginForm from '@/modules/auth/login'
 import React from 'react'
 
 const RootPage = () => {
   return (
-    <CandidateJobList />
+    // <CandidateJobList />
     // <JobList />
+    <LoginForm />
   )
 }
 

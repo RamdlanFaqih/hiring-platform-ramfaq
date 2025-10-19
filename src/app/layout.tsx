@@ -28,12 +28,6 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <div className="min-h-screen bg-[#f8fbf9]">
-          <header className="bg-white border-b border-[#e0e0e0] px-6 py-4 flex justify-between items-center">
-            <h1 className="text-2xl font-semibold text-[#1d1f20]">Job List</h1>
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#01959f] to-[#43936c] flex items-center justify-center text-white font-semibold">
-              A
-            </div>
-          </header>
           {children}
         </div>
       </body>
