@@ -1,8 +1,11 @@
 import { Resolver, useForm } from 'react-hook-form'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { JobCreateSchema, JobCreateInput } from '@/schema/create-job/create-job-schema'
+import { showSuccessNotification } from '@/components/success-notification';
+import { useState } from 'react';
 
 const useJobList = () => {
+    const [open, setOpen] = useState(false)
     const form = useForm<JobCreateInput>({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         resolver: zodResolver(JobCreateSchema) as Resolver<JobCreateInput, any>,
@@ -30,12 +33,14 @@ const useJobList = () => {
 
     const onSubmit = form.handleSubmit((data) => {
         console.log(data);
-
-        alert("success")
+        showSuccessNotification();
+        setOpen(false)
     })
     return {
         form,
-        onSubmit
+        onSubmit,
+        open,
+        setOpen
     }
 }
 

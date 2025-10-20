@@ -19,8 +19,7 @@ type JobCardProps = {
 }
 const JobList = () => {
     const router = useRouter()
-    const {form, onSubmit} = useJobList()
-    const [open, setOpen] = useState(false)
+    const {form, onSubmit, open, setOpen} = useJobList()
 
 
     const handleManageJob = (id: number) => {
