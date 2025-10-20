@@ -22,7 +22,7 @@ const JobList = () => {
 
 
     const handleManageJob = (id: number) => {
-        router.push(`/${id}`)
+        router.push(`/dashboard/${id}`)
     }
     const jobs: JobCardProps[] = [
         {
