@@ -7,6 +7,7 @@ import PromoCard from '@/components/promo-card'
 import { Search } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
+import useJobList from './job-list.hook'
 
 type JobCardProps = {
     id: number;
@@ -18,6 +19,7 @@ type JobCardProps = {
 }
 const JobList = () => {
     const router = useRouter()
+    const {form, onSubmit} = useJobList()
     const [open, setOpen] = useState(false)
 
 
@@ -60,7 +62,7 @@ const JobList = () => {
                     <PromoCard onOpenChange={setOpen} />
                 </div>
             </div>
-            {open && <JobCreateForm isOpen={open} onOpenChange={setOpen} />}
+            {open && <JobCreateForm onSubmit={onSubmit} isOpen={open} onOpenChange={setOpen} formControl={form}  />}
         </div>
     )
 }

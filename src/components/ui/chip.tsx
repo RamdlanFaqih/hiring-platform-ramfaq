@@ -10,6 +10,7 @@ interface ChipProps {
 export default function Chip({ label, isActive, isDisabled, onClick }: ChipProps) {
   return (
     <button
+      type="button"
       onClick={onClick}
       disabled={isDisabled}
       className={`px-6 py-2 rounded-full font-medium text-sm transition-all ${
