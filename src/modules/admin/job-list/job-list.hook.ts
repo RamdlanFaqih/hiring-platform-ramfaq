@@ -3,6 +3,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { JobCreateSchema, JobCreateInput } from '@/schema/create-job/create-job-schema'
 import { showSuccessNotification } from '@/components/success-notification';
 import { useState } from 'react';
+import { useJobStore } from '@/store/adminJobStore';
+
 
 const useJobList = () => {
     const [open, setOpen] = useState(false)
@@ -31,10 +33,20 @@ const useJobList = () => {
         },
     });
 
+    const addJob = useJobStore((s) => s.addJob)
+
     const onSubmit = form.handleSubmit((data) => {
-        console.log(data);
+        addJob({
+            jobName: data.jobName,
+            jobType: data.jobType,
+            description: data.description,
+            numberOfCandidates: data.numberOfCandidates,
+            salaryMin: data.salaryMin,
+            salaryMax: data.salaryMax,
+        })
         showSuccessNotification();
         setOpen(false)
+        form.reset()
     })
     return {
         form,
