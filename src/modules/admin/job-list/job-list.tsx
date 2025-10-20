@@ -6,7 +6,9 @@ import JobEmpty from '@/components/job-empty'
 import PromoCard from '@/components/promo-card'
 import { Search } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import React from 'react'
+import useJobList from './job-list.hook'
+import { useJobStore } from '@/store/adminJobStore'
 
 type JobCardProps = {
     id: number;
@@ -18,22 +20,21 @@ type JobCardProps = {
 }
 const JobList = () => {
     const router = useRouter()
-    const [open, setOpen] = useState(false)
+    const {form, onSubmit, open, setOpen} = useJobList()
+    const jobsFromStore = useJobStore((s) => s.jobs)
 
 
     const handleManageJob = (id: number) => {
         router.push(`/dashboard/${id}`)
     }
-    const jobs: JobCardProps[] = [
-        {
-            id: 1,
-            status: "Active",
-            statusColor: "bg-[#F8FBF9] text-[#43936c]",
-            startDate: "started on 1 Oct 2025",
-            title: "Front End Developer",
-            salary: "Rp7.000.000 - Rp8.000.000",
-        },
-    ]
+    const jobs: JobCardProps[] = jobsFromStore.map((j) => ({
+        id: j.id,
+        status: "Active",
+        statusColor: "bg-[#F8FBF9] text-[#43936c]",
+        startDate: "started on today",
+        title: j.jobName,
+        salary: `Rp${j.salaryMin.toLocaleString('id-ID')} - Rp${j.salaryMax.toLocaleString('id-ID')}`,
+    }))
     return (
         <div className="">
             <div className="flex gap-6 p-6 max-w-7xl mx-auto">
@@ -60,7 +61,7 @@ const JobList = () => {
                     <PromoCard onOpenChange={setOpen} />
                 </div>
             </div>
-            {open && <JobCreateForm isOpen={open} onOpenChange={setOpen} />}
+            {open && <JobCreateForm onSubmit={onSubmit} isOpen={open} onOpenChange={setOpen} formControl={form}  />}
         </div>
     )
 }

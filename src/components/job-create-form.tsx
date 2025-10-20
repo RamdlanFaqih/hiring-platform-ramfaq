@@ -9,16 +9,20 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { Field, FieldLabel } from "@/components/ui/field"
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "./ui/textarea"
 import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from "./ui/input-group"
 import { useState } from "react"
 import FieldRadioChips from "./field-radio-chip"
+import { Controller, UseFormReturn } from "react-hook-form"
+import { JobCreateInput } from "@/schema/create-job/create-job-schema"
 
 type JobCreateFormProps = {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  onSubmit: () => void;
+  formControl: UseFormReturn<JobCreateInput>;
 }
 
 type FieldRequirement = "mandatory" | "optional" | "off"
@@ -42,12 +46,19 @@ const initialFields: ProfileField[] = [
 ]
 
 
-const JobCreateForm = ({ isOpen, onOpenChange }: JobCreateFormProps) => {
+const JobCreateForm = ({ isOpen, onOpenChange, onSubmit, formControl }: JobCreateFormProps) => {
   const [fields, setFields] = useState<ProfileField[]>(initialFields)
 
+  const { watch, setValue } = formControl
+
+  const profileRequirements = watch("profileRequirements");
 
   const handleRequirementChange = (id: string, requirement: FieldRequirement) => {
     setFields(fields.map((field) => (field.id === id ? { ...field, requirement } : field)))
+    setValue(`profileRequirements.${id as keyof typeof profileRequirements}`, requirement, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
   }
 
   return (
@@ -64,86 +75,136 @@ const JobCreateForm = ({ isOpen, onOpenChange }: JobCreateFormProps) => {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6 w-full h-[70vh] overflow-auto">
-          <Field>
-            <FieldLabel>Job Name</FieldLabel>
-            <Input type="text" placeholder="Ex. Front End Engineer" />
-          </Field>
-
-          <Field>
-            <FieldLabel>Job Type</FieldLabel>
-            <Select>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Select job type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="full-time">Full-time</SelectItem>
-                <SelectItem value="contract">Contract</SelectItem>
-                <SelectItem value="part-time">Part-time</SelectItem>
-                <SelectItem value="internship">Internship</SelectItem>
-                <SelectItem value="Freelance">Freelance</SelectItem>
-              </SelectContent>
-            </Select>
-          </Field>
-
-          <Field>
-            <FieldLabel>Job Description</FieldLabel>
-            <Textarea placeholder="Ex" />
-          </Field>
-
-          <Field>
-            <FieldLabel>Number of Candidate Needed</FieldLabel>
-            <Input type="text" placeholder="Ex.2" />
-          </Field>
-
-          <div>
-            <h3 className="text-sm font-medium text-foreground mb-4">Job Salary</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <Field>
-                <FieldLabel>Minimum Estimated Salary</FieldLabel>
-                <InputGroup>
-                  <InputGroupAddon>
-                    <InputGroupText>Rp</InputGroupText>
-                  </InputGroupAddon>
-                  <InputGroupInput placeholder="7.000.000" />
-                </InputGroup>
-              </Field>
-              <Field>
-                <FieldLabel>Maximum Estimated Salary</FieldLabel>
-                <InputGroup>
-                  <InputGroupAddon>
-                    <InputGroupText>Rp</InputGroupText>
-                  </InputGroupAddon>
-                  <InputGroupInput placeholder="8.000.000" />
-                </InputGroup>
-              </Field>
-            </div>
-          </div>
-          <div className="p-4 border border-[#EDEDED] shadow-xl rounded-2xl">
-            <h1 className="text-sm font-semibold text-foreground mb-4">Minimum Profile Information Required</h1>
-            <div className="space-y-3 rounded-lg">
-              {fields.map((field, index) => (
-                <div key={field.id}>
-                  <FieldRadioChips
-                    label={field.label}
-                    requirement={field.requirement}
-                    onRequirementChange={(req) => handleRequirementChange(field.id, req)}
-                    disabledOptions={field.disabledOptions}
+        <form onSubmit={onSubmit} className="space-y-6 w-full h-[70vh] overflow-auto">
+          <FieldGroup>
+            <Controller
+              control={formControl.control}
+              name="jobName"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel>Job Name</FieldLabel>
+                  <Input
+                    type="text"
+                    placeholder="Ex. Front End Engineer"
+                    {...field}
                   />
-                  {index < fields.length - 1 && <div className="h-px bg-[#e0e0e0]" />}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+                </Field>
+              )}
+            />
+            <Controller
+              control={formControl.control}
+              name="jobType"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel>Job Type</FieldLabel>
+                  <Select onValueChange={(val) => field.onChange(val)} value={field.value}>
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Select job type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="full-time">Full-time</SelectItem>
+                      <SelectItem value="contract">Contract</SelectItem>
+                      <SelectItem value="part-time">Part-time</SelectItem>
+                      <SelectItem value="internship">Internship</SelectItem>
+                      <SelectItem value="Freelance">Freelance</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
+              )}
+            />
+            <Controller
+              control={formControl.control}
+              name="description"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel>Job Description</FieldLabel>
+                  <Textarea placeholder="Ex" {...field} />
+                </Field>
+              )}
+            />
+            <Controller
+              control={formControl.control}
+              name="numberOfCandidates"
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel>Number of Candidate Needed</FieldLabel>
+                  <Input type="text" placeholder="Ex. 2" {...field} />
+                </Field>
+              )}
+            />
+            <div>
+              <h3 className="text-sm font-medium text-foreground mb-4">Job Salary</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <Controller
+                  control={formControl.control}
+                  name="salaryMin"
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.error}>
+                      <FieldLabel>Minimum Estimated Salary</FieldLabel>
+                      <InputGroup>
+                        <InputGroupAddon>
+                          <InputGroupText>Rp</InputGroupText>
+                        </InputGroupAddon>
+                        <InputGroupInput
+                          placeholder="7.000.000"
+                          value={String(field.value ?? "")}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            const val = e.target.value.replace(/[^\d]/g, "");
+                            field.onChange(Number(val || 0));
+                          }}
+                        />
+                      </InputGroup>
+                    </Field>
+                  )}
+                />
 
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button type="button" variant="secondary">
+                <Controller
+                  control={formControl.control}
+                  name="salaryMax"
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.error}>
+                      <FieldLabel>Maximum Estimated Salary</FieldLabel>
+                      <InputGroup>
+                        <InputGroupAddon>
+                          <InputGroupText>Rp</InputGroupText>
+                        </InputGroupAddon>
+                        <InputGroupInput
+                          placeholder="8.000.000"
+                          value={String(field.value ?? "")}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            const val = e.target.value.replace(/[^\d]/g, "");
+                            field.onChange(Number(val || 0));
+                          }}
+                        />
+                      </InputGroup>
+                    </Field>
+                  )}
+                />
+              </div>
+            </div>
+            <div className="p-4 border border-[#EDEDED] shadow-xl rounded-2xl">
+              <h1 className="text-sm font-semibold text-foreground mb-4">Minimum Profile Information Required</h1>
+              <div className="space-y-3 rounded-lg">
+                {fields.map((field, index) => (
+                  <div key={field.id}>
+                    <FieldRadioChips
+                      label={field.label}
+                      requirement={field.requirement}
+                      onRequirementChange={(req) => handleRequirementChange(field.id, req)}
+                      disabledOptions={field.disabledOptions}
+                    />
+                    {index < fields.length - 1 && <div className="h-px bg-[#e0e0e0]" />}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </FieldGroup>
+          <DialogFooter>
+            <Button type="submit" variant="secondary">
               Publish Job
             </Button>
-          </DialogClose>
-        </DialogFooter>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   )
