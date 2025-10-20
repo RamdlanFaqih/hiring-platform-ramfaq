@@ -8,7 +8,7 @@ import { Search } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import useJobList from './job-list.hook'
-import { useJobStore } from './job.store'
+import { useJobStore } from '@/store/adminJobStore'
 
 type JobCardProps = {
     id: number;
