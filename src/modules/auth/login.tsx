@@ -8,6 +8,7 @@ import { Eye, EyeOff } from "lucide-react"
 import { useAuth } from "@/store/authStore"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
+import { showSuccessNotification } from "@/components/success-notification"
 
 
 const LoginForm = () => {
@@ -24,7 +25,7 @@ const LoginForm = () => {
         if (username === 'admin' && password === 'password') {
             setRole('admin')
             router.push('/dashboard')
-            toast.success('Login Successfully')
+            showSuccessNotification('Login Successfully')
             return
         }
 
@@ -32,12 +33,12 @@ const LoginForm = () => {
         if (username === 'candidate' && password === 'password') {
             setRole('candidate')
             router.push('/job-list')
-            toast.success('Login Successfully')
+            showSuccessNotification('Login Successfully')
             return
         }
 
 
-        toast.error('Invalid credentials — try admin/password or candidate/password')
+        toast.error('Invalid credentials')
     }
 
     useEffect(() => {
@@ -74,7 +75,7 @@ const LoginForm = () => {
 
     return (
         <div className="h-screen flex items-center justify-center">
-            <form onSubmit={handleSubmit} className="w-full max-w-sm bg-white p-6 rounded-2xl shadow-lg">
+            <form onSubmit={handleSubmit} className="w-full max-w-sm bg-white p-6 rounded-2xl shadow-lg space-y-5">
                 <h2 className="text-lg font-semibold mb-1">Hello There</h2>
                 <p className="text-sm text-muted-foreground mb-6">Sign in to continue to your account.</p>
                 <Field>
