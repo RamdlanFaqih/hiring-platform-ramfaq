@@ -8,6 +8,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 type Props = {
   isModalOpen: boolean;
   setIsModalOpen: (modal: boolean) => void;
+  onCapture?: (imageDataUrl: string) => void;
 }
 
 type GestureStep = 'three' | 'two' | 'one' | 'captured';
@@ -16,7 +17,7 @@ const HOLD_MS = 700;
 const STABLE_REQUIRED = 2;
 const COUNTDOWN_SECONDS = 3;
 
-const HandposeCapture = ({ isModalOpen, setIsModalOpen }: Props) => {
+const HandposeCapture = ({ isModalOpen, setIsModalOpen, onCapture }: Props) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const captureCanvasRef = useRef<HTMLCanvasElement>(null);
   const overlayRef = useRef<HTMLCanvasElement>(null);
@@ -132,8 +133,8 @@ const HandposeCapture = ({ isModalOpen, setIsModalOpen }: Props) => {
     } catch (e) { /* ignore */ }
 
     // stop camera/hands
-    try { cameraRef.current?.stop?.(); } catch {}
-    try { handsRef.current?.close?.(); } catch {}
+    try { cameraRef.current?.stop?.(); } catch { }
+    try { handsRef.current?.close?.(); } catch { }
 
     handsRef.current = null;
     cameraRef.current = null;
@@ -248,7 +249,7 @@ const HandposeCapture = ({ isModalOpen, setIsModalOpen }: Props) => {
     }
     ctx.clearRect(0, 0, overlay.width, overlay.height);
 
-    const landmarks = results.multiHandLandmarks?.[0] as Array<{x:number,y:number,z:number}> | undefined;
+    const landmarks = results.multiHandLandmarks?.[0] as Array<{ x: number, y: number, z: number }> | undefined;
 
     // If final pose was done and hand disappears -> start countdown
     if (finalPoseDoneRef.current && !landmarks && !countdownActiveRef.current) {
@@ -342,9 +343,9 @@ const HandposeCapture = ({ isModalOpen, setIsModalOpen }: Props) => {
   };
 
   // finger detection ignoring thumb
-  const detectFingers = (landmarks: Array<{x:number,y:number,z:number}>) => {
-    const tip = (i:number) => landmarks[i];
-    const pip = (i:number) => landmarks[i - 2];
+  const detectFingers = (landmarks: Array<{ x: number, y: number, z: number }>) => {
+    const tip = (i: number) => landmarks[i];
+    const pip = (i: number) => landmarks[i - 2];
 
     const indexUp = tip(8).y < pip(8).y;
     const middleUp = tip(12).y < pip(12).y;
@@ -354,17 +355,17 @@ const HandposeCapture = ({ isModalOpen, setIsModalOpen }: Props) => {
     return { index: indexUp, middle: middleUp, ring: ringUp, pinky: pinkyUp };
   };
 
-  const isPoseThree = (f: {index:boolean,middle:boolean,ring:boolean,pinky:boolean}) => {
+  const isPoseThree = (f: { index: boolean, middle: boolean, ring: boolean, pinky: boolean }) => {
     return f.index && f.middle && f.ring && !f.pinky;
   };
-  const isPoseTwo = (f: {index:boolean,middle:boolean,ring:boolean,pinky:boolean}) => {
+  const isPoseTwo = (f: { index: boolean, middle: boolean, ring: boolean, pinky: boolean }) => {
     return f.index && f.middle && !f.ring && !f.pinky;
   };
-  const isPoseOne = (f: {index:boolean,middle:boolean,ring:boolean,pinky:boolean}) => {
+  const isPoseOne = (f: { index: boolean, middle: boolean, ring: boolean, pinky: boolean }) => {
     return f.index && !f.middle && !f.ring && !f.pinky;
   };
 
-  const drawStatusBox = (ctx: CanvasRenderingContext2D, box: {x:number,y:number,w:number,h:number} | null, label: string, color: 'green' | 'red' | 'gray', progress: number, vw: number, vh: number) => {
+  const drawStatusBox = (ctx: CanvasRenderingContext2D, box: { x: number, y: number, w: number, h: number } | null, label: string, color: 'green' | 'red' | 'gray', progress: number, vw: number, vh: number) => {
     const pad = 8;
     ctx.save();
     ctx.lineWidth = 4;
@@ -373,7 +374,7 @@ const HandposeCapture = ({ isModalOpen, setIsModalOpen }: Props) => {
 
     if (box) {
       ctx.strokeStyle = strokeColor;
-      ctx.strokeRect(box.x - pad, box.y - pad, Math.max(30, box.w + pad*2), Math.max(30, box.h + pad*2));
+      ctx.strokeRect(box.x - pad, box.y - pad, Math.max(30, box.w + pad * 2), Math.max(30, box.h + pad * 2));
       const labelX = Math.max(8, box.x - pad);
       const labelY = Math.max(8, box.y - 26 - pad);
       ctx.fillStyle = fillColor;
@@ -401,7 +402,7 @@ const HandposeCapture = ({ isModalOpen, setIsModalOpen }: Props) => {
     ctx.restore();
   };
 
-  const drawLandmarks = (ctx: CanvasRenderingContext2D, landmarks: Array<{x:number,y:number}>, vw: number, vh: number) => {
+  const drawLandmarks = (ctx: CanvasRenderingContext2D, landmarks: Array<{ x: number, y: number }>, vw: number, vh: number) => {
     ctx.save();
     ctx.fillStyle = 'rgba(0,0,0,0.6)';
     for (const p of landmarks) {
@@ -521,7 +522,16 @@ const HandposeCapture = ({ isModalOpen, setIsModalOpen }: Props) => {
               {capturedImage && (
                 <div className="flex gap-3 justify-center">
                   <button onClick={resetCapture} className="px-6 py-2 bg-[#01959f] text-white rounded-lg hover:bg-[#017a8a] transition-colors font-medium">Retake Photo</button>
-                  <button onClick={() => { setIsModalOpen(false); resetCapture(); }} className="px-6 py-2 bg-[#e0e0e0] text-[#1d1f20] rounded-lg hover:bg-[#d0d0d0] transition-colors font-medium">Done</button>
+                  <button
+                    onClick={() => {
+                      // kirim captured image ke parent sebelum menutup
+                      if (capturedImage && typeof onCapture === 'function') {
+                        onCapture(capturedImage);
+                      }
+                      setIsModalOpen(false);
+                      resetCapture();
+                    }}
+                     className="px-6 py-2 bg-[#e0e0e0] text-[#1d1f20] rounded-lg hover:bg-[#d0d0d0] transition-colors font-medium">Done</button>
                 </div>
               )}
             </div>

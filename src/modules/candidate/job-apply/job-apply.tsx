@@ -1,46 +1,27 @@
 "use client"
 
 import { useState } from "react"
-import { useForm } from "react-hook-form"
+import { Controller } from "react-hook-form"
 import { ChevronLeft, Camera } from "lucide-react"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Field } from "@/components/ui/field"
+import { Field, FieldLabel } from "@/components/ui/field"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import HandposeCapture from "@/components/handpose-capture"
-
-interface FormData {
-    fullName: string
-    dateOfBirth: string
-    pronoun: string
-    domicile: string
-    phoneNumber: string
-    email: string
-    linkedIn: string
-}
+import useJobApply from "./job-apply.hook"
 
 const JobApply = () => {
-    const [profileImage, setProfileImage] = useState("/Avatar.png")
+    const { form, onSubmit } = useJobApply()
+    const { control, watch, setValue, formState} = form
     const [isOpen, setOpen] = useState(false)
-    const { register, handleSubmit, watch, setValue } = useForm<FormData>({
-        defaultValues: {
-            fullName: "",
-            dateOfBirth: "",
-            pronoun: "",
-            domicile: "",
-            phoneNumber: "",
-            email: "",
-            linkedIn: "",
-        },
-    })
 
-    const pronoun = watch("pronoun")
-    const domicile = watch("domicile")
+    const profileImage = watch("profileImage")
 
-    const onSubmit = (data: FormData) => {
-        console.log("Form submitted:", data)
+    const handleCapture = (img: string) => {
+        setValue("profileImage", img, { shouldDirty: true, shouldValidate: true })
+        setOpen(false)
     }
 
     return (
@@ -61,16 +42,16 @@ const JobApply = () => {
                         </div>
                     </div>
 
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                        {/* Required Label */}
+                    <form onSubmit={onSubmit} className="space-y-6">
+                        {/* Required FieldLabel */}
                         <div className="text-[#e11428] font-semibold text-sm">* Required</div>
 
                         {/* Photo Profile Section */}
                         <Field>
-                            <Label className="text-[#1d1f20] font-medium">Photo Profile</Label>
+                            <FieldLabel className="text-[#1d1f20] font-medium">Photo Profile</FieldLabel>
                             <div className="flex flex-col gap-4 mt-3">
-                                <div className="w-28 h-28 rounded-2xl overflow-hidden">
-                                    <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
+                                <div className="relative w-28 h-28 rounded-2xl overflow-hidden">
+                                    <Image src={profileImage ?? "/Avatar.png"} alt="Profile" fill className="object-cover" />
                                 </div>
                                 <div>
                                     <Button
@@ -87,128 +68,171 @@ const JobApply = () => {
                         </Field>
 
                         {/* Full Name */}
-                        <Field>
-                            <Label htmlFor="fullName" className="text-[#1d1f20] font-medium">
-                                Full name<span className="text-[#e11428]">*</span>
-                            </Label>
-                            <Input
-                                id="fullName"
-                                placeholder="Enter your full name"
-                                {...register("fullName")}
-                                className="mt-2 border-[#e0e0e0] text-[#1d1f20] placeholder-[#9e9e9e] focus:ring-[#01959f]"
-                            />
-                        </Field>
+                        <Controller
+                            control={control}
+                            name="fullName"
+                            render={({ field, fieldState }) => (
+                                <Field data-invalid={fieldState.invalid}>
+                                    <FieldLabel htmlFor="fullName" className="text-[#1d1f20] font-medium">
+                                        Full name<span className="text-[#e11428]">*</span>
+                                    </FieldLabel>
+                                    <Input
+                                        id="fullName"
+                                        placeholder="Enter your full name"
+                                        {...field}
+                                        className="mt-2 border-[#e0e0e0] text-[#1d1f20] placeholder-[#9e9e9e] focus:ring-[#01959f]"
+                                    />
+                                </Field>
+                            )}
+                        />
 
                         {/* Date of Birth */}
-                        <Field>
-                            <Label htmlFor="dateOfBirth" className="text-[#1d1f20] font-medium">
-                                Date of birth<span className="text-[#e11428]">*</span>
-                            </Label>
-                            <Input
-                                id="dateOfBirth"
-                                type="date"
-                                {...register("dateOfBirth")}
-                                className="mt-2 border-[#e0e0e0] text-[#1d1f20] focus:ring-[#01959f]"
-                            />
-                        </Field>
+                        <Controller
+                            control={control}
+                            name="dateOfBirth"
+                            render={({ field, fieldState }) => (
+                                <Field data-invalid={fieldState.invalid}>
+                                    <FieldLabel htmlFor="dateOfBirth" className="text-[#1d1f20] font-medium">
+                                        Date of birth<span className="text-[#e11428]">*</span>
+                                    </FieldLabel>
+                                    <Input
+                                        id="dateOfBirth"
+                                        type="date"
+                                        {...field}
+                                        className="mt-2 border-[#e0e0e0] text-[#1d1f20] focus:ring-[#01959f]"
+                                    />
+                                </Field>
+                            )}
+                        />
 
                         {/* Pronoun */}
-                        <Field>
-                            <Label className="text-[#1d1f20] font-medium">
-                                Pronoun (gender)<span className="text-[#e11428]">*</span>
-                            </Label>
-                            <RadioGroup
-                                value={pronoun}
-                                onValueChange={(value) => setValue("pronoun", value)}
-                                className="mt-3 flex gap-8"
-                            >
-                                <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="female" id="female" />
-                                    <Label htmlFor="female" className="text-[#1d1f20] font-normal cursor-pointer">
-                                        She/her (Female)
-                                    </Label>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="male" id="male" />
-                                    <Label htmlFor="male" className="text-[#1d1f20] font-normal cursor-pointer">
-                                        He/him (Male)
-                                    </Label>
-                                </div>
-                            </RadioGroup>
-                        </Field>
+                        <Controller
+                            control={control}
+                            name="pronoun"
+                            render={({ field, fieldState }) => (
+                                <Field data-invalid={fieldState.invalid}>
+                                    <FieldLabel className="text-[#1d1f20] font-medium">
+                                        Pronoun (gender)<span className="text-[#e11428]">*</span>
+                                    </FieldLabel>
+                                    <RadioGroup
+                                        value={field.value}
+                                        onValueChange={(value) => field.onChange(value)}
+                                        className="mt-3 flex gap-8"
+                                    >
+                                        <div className="flex items-center space-x-2">
+                                            <RadioGroupItem value="female" id="female" />
+                                            <FieldLabel htmlFor="female" className="text-[#1d1f20] font-normal cursor-pointer">
+                                                She/her (Female)
+                                            </FieldLabel>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            <RadioGroupItem value="male" id="male" />
+                                            <FieldLabel htmlFor="male" className="text-[#1d1f20] font-normal cursor-pointer">
+                                                He/him (Male)
+                                            </FieldLabel>
+                                        </div>
+                                    </RadioGroup>
+                                </Field>
+                            )}
+                        />
 
                         {/* Domicile */}
-                        <Field>
-                            <Label htmlFor="domicile" className="text-[#1d1f20] font-medium">
-                                Domicile<span className="text-[#e11428]">*</span>
-                            </Label>
-                            <Select value={domicile} onValueChange={(value) => setValue("domicile", value)}>
-                                <SelectTrigger id="domicile" className="mt-2 border-[#e0e0e0] text-[#1d1f20] focus:ring-[#01959f]">
-                                    <SelectValue placeholder="Choose your domicile" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="jakarta">Jakarta</SelectItem>
-                                    <SelectItem value="surabaya">Surabaya</SelectItem>
-                                    <SelectItem value="bandung">Bandung</SelectItem>
-                                    <SelectItem value="medan">Medan</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </Field>
+                        <Controller
+                            control={control}
+                            name="domicile"
+                            render={({ field, fieldState }) => (
+                                <Field data-invalid={fieldState.invalid}>
+                                    <FieldLabel htmlFor="domicile" className="text-[#1d1f20] font-medium">
+                                        Domicile<span className="text-[#e11428]">*</span>
+                                    </FieldLabel>
+                                    <Select value={field.value} onValueChange={(value) => field.onChange(value)}>
+                                        <SelectTrigger id="domicile" className="mt-2 border-[#e0e0e0] text-[#1d1f20] focus:ring-[#01959f]">
+                                            <SelectValue placeholder="Choose your domicile" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="jakarta">Jakarta</SelectItem>
+                                            <SelectItem value="surabaya">Surabaya</SelectItem>
+                                            <SelectItem value="bandung">Bandung</SelectItem>
+                                            <SelectItem value="medan">Medan</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </Field>
+                            )}
+                        />
 
                         {/* Phone Number */}
-                        <Field>
-                            <Label htmlFor="phoneNumber" className="text-[#1d1f20] font-medium">
-                                Phone number<span className="text-[#e11428]">*</span>
-                            </Label>
-                            <div className="flex gap-2 mt-2">
-                                <Select defaultValue="62">
-                                    <SelectTrigger className="w-24 border-[#e0e0e0] text-[#1d1f20] focus:ring-[#01959f]">
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="62">🇮🇩 +62</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                <Input
-                                    id="phoneNumber"
-                                    placeholder="81XXXXXXXXX"
-                                    {...register("phoneNumber")}
-                                    className="flex-1 border-[#e0e0e0] text-[#1d1f20] placeholder-[#9e9e9e] focus:ring-[#01959f]"
-                                />
-                            </div>
-                        </Field>
+                        <Controller
+                            control={control}
+                            name="phoneNumber"
+                            render={({ field, fieldState }) => (
+                                <Field data-invalid={fieldState.invalid}>
+                                    <FieldLabel htmlFor="phoneNumber" className="text-[#1d1f20] font-medium">
+                                        Phone number<span className="text-[#e11428]">*</span>
+                                    </FieldLabel>
+                                    <div className="flex gap-2 mt-2">
+                                        <Select defaultValue="62">
+                                            <SelectTrigger className="w-24 border-[#e0e0e0] text-[#1d1f20] focus:ring-[#01959f]">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="62">🇮🇩 +62</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <Input
+                                            id="phoneNumber"
+                                            placeholder="81XXXXXXXXX"
+                                            {...field}
+                                            className="flex-1 border-[#e0e0e0] text-[#1d1f20] placeholder-[#9e9e9e] focus:ring-[#01959f]"
+                                        />
+                                    </div>
+                                </Field>
+                            )}
+                        />
 
                         {/* Email */}
-                        <Field>
-                            <Label htmlFor="email" className="text-[#1d1f20] font-medium">
-                                Email<span className="text-[#e11428]">*</span>
-                            </Label>
-                            <Input
-                                id="email"
-                                type="email"
-                                placeholder="Enter your email address"
-                                {...register("email")}
-                                className="mt-2 border-[#e0e0e0] text-[#1d1f20] placeholder-[#9e9e9e] focus:ring-[#01959f]"
-                            />
-                        </Field>
+                        <Controller
+                            control={control}
+                            name="email"
+                            render={({ field, fieldState }) => (
+                                <Field data-invalid={fieldState.invalid}>
+                                    <FieldLabel htmlFor="email" className="text-[#1d1f20] font-medium">
+                                        Email<span className="text-[#e11428]">*</span>
+                                    </FieldLabel>
+                                    <Input
+                                        id="email"
+                                        type="email"
+                                        placeholder="Enter your email address"
+                                        {...field}
+                                        className="mt-2 border-[#e0e0e0] text-[#1d1f20] placeholder-[#9e9e9e] focus:ring-[#01959f]"
+                                    />
+                                </Field>
+                            )}
+                        />
 
                         {/* LinkedIn */}
-                        <Field>
-                            <Label htmlFor="linkedIn" className="text-[#1d1f20] font-medium">
-                                Link LinkedIn<span className="text-[#e11428]">*</span>
-                            </Label>
-                            <Input
-                                id="linkedIn"
-                                type="url"
-                                placeholder="https://linkedin.com/in/username"
-                                {...register("linkedIn")}
-                                className="mt-2 border-[#e0e0e0] text-[#1d1f20] placeholder-[#9e9e9e] focus:ring-[#01959f]"
-                            />
-                        </Field>
+                        <Controller
+                            control={control}
+                            name="linkedIn"
+                            render={({ field, fieldState }) => (
+                                <Field data-invalid={fieldState.invalid}>
+                                    <FieldLabel htmlFor="linkedIn" className="text-[#1d1f20] font-medium">
+                                        Link LinkedIn<span className="text-[#e11428]">*</span>
+                                    </FieldLabel>
+                                    <Input
+                                        id="linkedIn"
+                                        type="url"
+                                        placeholder="https://linkedin.com/in/username"
+                                        {...field}
+                                        className="mt-2 border-[#e0e0e0] text-[#1d1f20] placeholder-[#9e9e9e] focus:ring-[#01959f]"
+                                    />
+                                </Field>
+                            )}
+                        />
 
                         {/* Submit Button */}
                         <Button
                             type="submit"
+                            disabled={!formState.isValid}
                             className="w-full bg-[#01959f] hover:bg-[#017a85] text-white font-semibold py-3 rounded-lg mt-8"
                         >
                             Submit
@@ -216,7 +240,7 @@ const JobApply = () => {
                     </form>
                 </div>
             </div>
-            <HandposeCapture isModalOpen={isOpen} setIsModalOpen={setOpen} />
+            <HandposeCapture onCapture={handleCapture} isModalOpen={isOpen} setIsModalOpen={setOpen} />
         </div>
     )
 }
