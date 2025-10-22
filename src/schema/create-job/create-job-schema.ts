@@ -37,11 +37,11 @@ export const JobCreateSchema = z
       }, z.number().int().min(1, "At least 1 candidate is required")),
     salaryMin: z.preprocess(
       (val) => (typeof val === "string" && val.trim() !== "" ? Number(val) : val),
-      z.number().min(0, "Salary min must be >= 0")
+      z.number().min(1, "Salary min must be greater than 0")
     ),
     salaryMax: z.preprocess(
       (val) => (typeof val === "string" && val.trim() !== "" ? Number(val) : val),
-      z.number().min(0, "Salary max must be >= 0")
+      z.number().min(1, "Salary max must be greater than 0")
     ),
     profileRequirements: ProfileRequirementsSchema,
   })

@@ -5,6 +5,7 @@ import CandidateJobCard, { Job } from "./job-card/job-card"
 import JobDetail from "./job-detail/job-detail"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/store/authStore"
+import Header from "@/components/header"
 
 const jobsData = [
     {
@@ -171,12 +172,7 @@ const CandidateJobList = () => {
 
     return (
         <div>
-            <header className="bg-white border-b border-[#e0e0e0] px-6 py-4 flex justify-between items-center">
-                <h1 className="text-2xl font-semibold text-[#1d1f20]">Job List</h1>
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#01959f] to-[#43936c] flex items-center justify-center text-white font-semibold">
-                    A
-                </div>
-            </header>
+            <Header />
             <main className="flex gap-6 p-6 max-w-7xl mx-auto h-[calc(100vh-80px)]">
                 <CandidateJobCard jobs={jobsData} activeJobId={activeJobId} onSelectJob={setActiveJobId} />
 
