@@ -132,8 +132,6 @@ src/
 ```
 
 ## Notes
-
 - This is a development/demo project using mock data
 - Data fetching with TanStack Query and Axios has not been implemented yet
-- No real backend API is connected (uses `/mock` endpoint)
 - Authentication is stored in browser cookies via Zustand
