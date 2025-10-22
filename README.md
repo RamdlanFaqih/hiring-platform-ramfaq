@@ -7,7 +7,7 @@ A simple hiring platform application with hand gesture recognition for profile p
 This project is a web-based hiring platform that allows:
 - **Admin users** to create and manage job postings
 - **Candidates** to browse available jobs and submit applications
-- **Hand gesture recognition** feature for capturing profile photos during the application process using MediaPipe and TensorFlow.js
+- **Hand gesture recognition** feature for capturing profile photos during the application process using MediaPipe
 
 The application features a clean, modern UI with role-based access control and form validation.
 
