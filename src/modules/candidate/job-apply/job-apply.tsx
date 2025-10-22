@@ -11,10 +11,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import HandposeCapture from "@/components/handpose-capture"
 import useJobApply from "./job-apply.hook"
+import { useParams } from "next/navigation"
 
 const JobApply = () => {
-    const { form, onSubmit } = useJobApply()
-    const { control, watch, setValue, formState} = form
+    const params = useParams()
+    const id = params?.id as string | undefined
+
+    const { form, onSubmit } = useJobApply(id)
+    const { control, watch, setValue } = form
     const [isOpen, setOpen] = useState(false)
 
     const profileImage = watch("profileImage")
@@ -23,6 +27,7 @@ const JobApply = () => {
         setValue("profileImage", img, { shouldDirty: true, shouldValidate: true })
         setOpen(false)
     }
+
 
     return (
         <div>
@@ -51,7 +56,7 @@ const JobApply = () => {
                             <FieldLabel className="text-[#1d1f20] font-medium">Photo Profile</FieldLabel>
                             <div className="flex flex-col gap-4 mt-3">
                                 <div className="relative w-28 h-28 rounded-2xl overflow-hidden">
-                                    <Image src={profileImage ?? "/Avatar.png"} alt="Profile" fill className="object-cover" />
+                                    <Image src={profileImage && profileImage.trim() !== "" ? profileImage : "/Avatar.png"} alt="Profile" fill className="object-cover" />
                                 </div>
                                 <div>
                                     <Button
@@ -80,7 +85,9 @@ const JobApply = () => {
                                         id="fullName"
                                         placeholder="Enter your full name"
                                         {...field}
-                                        className="mt-2 border-[#e0e0e0] text-[#1d1f20] placeholder-[#9e9e9e] focus:ring-[#01959f]"
+                                        className={`mt-2 text-[#1d1f20] placeholder-[#9e9e9e] focus:ring-[#01959f] ${
+                                            fieldState.invalid ? "border-[#e11428] border-2" : "border-[#e0e0e0]"
+                                        }`}
                                     />
                                 </Field>
                             )}
@@ -99,7 +106,9 @@ const JobApply = () => {
                                         id="dateOfBirth"
                                         type="date"
                                         {...field}
-                                        className="mt-2 border-[#e0e0e0] text-[#1d1f20] focus:ring-[#01959f]"
+                                        className={`mt-2 text-[#1d1f20] focus:ring-[#01959f] ${
+                                            fieldState.invalid ? "border-[#e11428] border-2" : "border-[#e0e0e0]"
+                                        }`}
                                     />
                                 </Field>
                             )}
@@ -146,7 +155,12 @@ const JobApply = () => {
                                         Domicile<span className="text-[#e11428]">*</span>
                                     </FieldLabel>
                                     <Select value={field.value} onValueChange={(value) => field.onChange(value)}>
-                                        <SelectTrigger id="domicile" className="mt-2 border-[#e0e0e0] text-[#1d1f20] focus:ring-[#01959f]">
+                                        <SelectTrigger 
+                                            id="domicile" 
+                                            className={`mt-2 text-[#1d1f20] focus:ring-[#01959f] ${
+                                                fieldState.invalid ? "border-[#e11428] border-2" : "border-[#e0e0e0]"
+                                            }`}
+                                        >
                                             <SelectValue placeholder="Choose your domicile" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -182,7 +196,9 @@ const JobApply = () => {
                                             id="phoneNumber"
                                             placeholder="81XXXXXXXXX"
                                             {...field}
-                                            className="flex-1 border-[#e0e0e0] text-[#1d1f20] placeholder-[#9e9e9e] focus:ring-[#01959f]"
+                                            className={`flex-1 text-[#1d1f20] placeholder-[#9e9e9e] focus:ring-[#01959f] ${
+                                                fieldState.invalid ? "border-[#e11428] border-2" : "border-[#e0e0e0]"
+                                            }`}
                                         />
                                     </div>
                                 </Field>
@@ -203,7 +219,9 @@ const JobApply = () => {
                                         type="email"
                                         placeholder="Enter your email address"
                                         {...field}
-                                        className="mt-2 border-[#e0e0e0] text-[#1d1f20] placeholder-[#9e9e9e] focus:ring-[#01959f]"
+                                        className={`mt-2 text-[#1d1f20] placeholder-[#9e9e9e] focus:ring-[#01959f] ${
+                                            fieldState.invalid ? "border-[#e11428] border-2" : "border-[#e0e0e0]"
+                                        }`}
                                     />
                                 </Field>
                             )}
@@ -223,7 +241,9 @@ const JobApply = () => {
                                         type="url"
                                         placeholder="https://linkedin.com/in/username"
                                         {...field}
-                                        className="mt-2 border-[#e0e0e0] text-[#1d1f20] placeholder-[#9e9e9e] focus:ring-[#01959f]"
+                                        className={`mt-2 text-[#1d1f20] placeholder-[#9e9e9e] focus:ring-[#01959f] ${
+                                            fieldState.invalid ? "border-[#e11428] border-2" : "border-[#e0e0e0]"
+                                        }`}
                                     />
                                 </Field>
                             )}
@@ -232,7 +252,6 @@ const JobApply = () => {
                         {/* Submit Button */}
                         <Button
                             type="submit"
-                            disabled={!formState.isValid}
                             className="w-full bg-[#01959f] hover:bg-[#017a85] text-white font-semibold py-3 rounded-lg mt-8"
                         >
                             Submit

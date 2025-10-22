@@ -1,13 +1,16 @@
 import { showSuccessNotification } from '@/components/success-notification'
 import { profileFormSchema, ProfileFormValues } from '@/schema/apply-job/apply-job-schema'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 
-const useJobApply = () => {
+
+const useJobApply = (id: string | undefined) => {
+    const router = useRouter()
     const form = useForm<ProfileFormValues>({
         resolver: zodResolver(profileFormSchema),
         defaultValues: {
-            profileImage: undefined,
+            profileImage: null,
             fullName: "",
             dateOfBirth: "",
             pronoun: "female",
@@ -16,8 +19,8 @@ const useJobApply = () => {
             email: "",
             linkedIn: "",
         },
-        mode: 'onChange',
-        reValidateMode: 'onSubmit'
+        mode: 'onSubmit',
+        reValidateMode: 'onChange'
     })
 
     console.log(form.watch('profileImage'))
@@ -27,6 +30,7 @@ const useJobApply = () => {
         console.log("button clicked")
         showSuccessNotification("Job Applied")
         form.reset()
+        router.push(`/job-list/${id}/success`)
     })
 
     return {

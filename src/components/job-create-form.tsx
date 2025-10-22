@@ -49,7 +49,7 @@ const initialFields: ProfileField[] = [
 const JobCreateForm = ({ isOpen, onOpenChange, onSubmit, formControl }: JobCreateFormProps) => {
   const [fields, setFields] = useState<ProfileField[]>(initialFields)
 
-  const { watch, setValue } = formControl
+  const { watch, setValue, formState } = formControl
 
   const profileRequirements = watch("profileRequirements");
 
@@ -139,7 +139,7 @@ const JobCreateForm = ({ isOpen, onOpenChange, onSubmit, formControl }: JobCreat
                   control={formControl.control}
                   name="salaryMin"
                   render={({ field, fieldState }) => (
-                    <Field data-invalid={fieldState.error}>
+                    <Field data-invalid={fieldState.invalid}>
                       <FieldLabel>Minimum Estimated Salary</FieldLabel>
                       <InputGroup>
                         <InputGroupAddon>
@@ -162,7 +162,7 @@ const JobCreateForm = ({ isOpen, onOpenChange, onSubmit, formControl }: JobCreat
                   control={formControl.control}
                   name="salaryMax"
                   render={({ field, fieldState }) => (
-                    <Field data-invalid={fieldState.error}>
+                    <Field data-invalid={fieldState.invalid}>
                       <FieldLabel>Maximum Estimated Salary</FieldLabel>
                       <InputGroup>
                         <InputGroupAddon>
@@ -200,7 +200,7 @@ const JobCreateForm = ({ isOpen, onOpenChange, onSubmit, formControl }: JobCreat
             </div>
           </FieldGroup>
           <DialogFooter>
-            <Button type="submit" variant="secondary">
+            <Button type="submit" disabled={!formState.isValid}>
               Publish Job
             </Button>
           </DialogFooter>
