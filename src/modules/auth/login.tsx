@@ -1,34 +1,89 @@
 'use client'
 
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Field, FieldLabel } from "@/components/ui/field"
-import { Checkbox } from "@/components/ui/checkbox"
 import { Eye, EyeOff } from "lucide-react"
+import { useAuth } from "@/store/authStore"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 
 
 const LoginForm = () => {
-    const [email, setEmail] = useState("")
+    const router = useRouter()
+    const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
-    const [remember, setRemember] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
+    const { role, setRole } = useAuth()
 
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault()
+
+
+        if (username === 'admin' && password === 'password') {
+            setRole('admin')
+            router.push('/dashboard')
+            toast.success('Login Successfully')
+            return
+        }
+
+
+        if (username === 'candidate' && password === 'password') {
+            setRole('candidate')
+            router.push('/job-list')
+            toast.success('Login Successfully')
+            return
+        }
+
+
+        toast.error('Invalid credentials — try admin/password or candidate/password')
+    }
+
+    useEffect(() => {
+        // If zustand already has role, we'll handle redirect below.
+        if (!role) {
+            const cookieRole = typeof document !== 'undefined'
+                ? document.cookie.match(/(^|;)\s*role=([^;]+)/)?.[2] ?? null
+                : null
+
+            if (cookieRole) {
+                setRole(cookieRole)
+            }
+        }
+    }, [role, setRole])
+
+    // If role exists (either from store or cookie), immediately navigate to the correct page
+    useEffect(() => {
+        if (!role) return
+
+        if (role === 'admin') {
+            // replace so user can't go back to login via back button easily
+            router.replace('/dashboard')
+            return
+        }
+
+        if (role === 'candidate') {
+            router.replace('/job-list')
+            return
+        }
+
+        // unknown role -> clear it and stay on login (optional)
+        setRole(null)
+    }, [role, router, setRole])
 
     return (
         <div className="h-screen flex items-center justify-center">
-            <form  className="w-full max-w-sm bg-white p-6 rounded-2xl shadow-lg">
+            <form onSubmit={handleSubmit} className="w-full max-w-sm bg-white p-6 rounded-2xl shadow-lg">
                 <h2 className="text-lg font-semibold mb-1">Hello There</h2>
                 <p className="text-sm text-muted-foreground mb-6">Sign in to continue to your account.</p>
-
                 <Field>
-                    <FieldLabel>Email</FieldLabel>
+                    <FieldLabel>Username</FieldLabel>
                     <Input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="you@company.com"
-                        autoComplete="email"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="username"
+                        autoComplete="username"
                     />
                 </Field>
 
@@ -53,22 +108,14 @@ const LoginForm = () => {
                     </div>
                 </Field>
 
-                <div className="flex items-center justify-between mt-2 mb-4">
-                    <label className="flex items-center gap-2 text-sm select-none">
-                        <Checkbox checked={remember} onCheckedChange={(v) => setRemember(Boolean(v))} />
-                        <span>Remember me</span>
-                    </label>
-                    <a className="text-sm underline underline-offset-2" href="#">Forgot password?</a>
-                </div>
-
-                <Button type="submit" className="w-full">
+                <Button type="submit" className="w-full mt-5">
                     Login
                 </Button>
-
+                {/* 
                 <div className="text-center text-sm mt-4">
                     <span className="text-muted-foreground">Don’t have an account?</span>{' '}
                     <a className="font-medium underline underline-offset-2" href="#">Create account</a>
-                </div>
+                </div> */}
             </form>
         </div>
     )
