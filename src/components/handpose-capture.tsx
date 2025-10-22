@@ -479,7 +479,8 @@ const HandposeCapture = ({ isModalOpen, setIsModalOpen, onCapture }: Props) => {
                 {/* Countdown UI (React overlay) */}
                 {countdown !== null && !capturedImage && (
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <div className="flex items-center justify-center w-40 h-40 rounded-full bg-black/60">
+                    <div className="flex flex-col items-center justify-center w-full h-full  bg-black/60">
+                      <span className="text-white font-semibold">Capturing Photo in</span>
                       <span className="text-5xl font-bold text-white select-none">{countdown}</span>
                     </div>
                   </div>
@@ -531,7 +532,7 @@ const HandposeCapture = ({ isModalOpen, setIsModalOpen, onCapture }: Props) => {
                       setIsModalOpen(false);
                       resetCapture();
                     }}
-                     className="px-6 py-2 bg-[#e0e0e0] text-[#1d1f20] rounded-lg hover:bg-[#d0d0d0] transition-colors font-medium">Done</button>
+                    className="px-6 py-2 bg-[#e0e0e0] text-[#1d1f20] rounded-lg hover:bg-[#d0d0d0] transition-colors font-medium">Done</button>
                 </div>
               )}
             </div>
