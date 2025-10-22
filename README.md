@@ -51,7 +51,7 @@ The application features a clean, modern UI with role-based access control and f
 
 ### Prerequisites
 - Node.js (version 20 or higher recommended)
-- npm, yarn, pnpm, or bun package manager
+- npm
 
 ### Installation
 
