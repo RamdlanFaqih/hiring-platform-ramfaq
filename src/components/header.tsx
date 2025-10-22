@@ -41,7 +41,7 @@ export default function Header({ title }: { title?: string }) {
                 <button
                     aria-label="Open user menu"
                     onClick={() => setOpen((s) => !s)}
-                    className="w-10 h-10 rounded-full bg-gradient-to-br from-[#01959f] to-[#43936c] flex items-center justify-center text-white font-semibold"
+                    className="w-10 h-10 rounded-full bg-gradient-to-br from-[#01959f] to-[#43936c] flex items-center justify-center text-white font-semibold cursor-pointer"
                 >
                     {role?.[0]?.toUpperCase() ?? "A"}
                 </button>
