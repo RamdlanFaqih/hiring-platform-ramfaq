@@ -38,27 +38,22 @@ const JobApply = () => {
         <div className="min-h-screen bg-gray-50">
             <div className="max-w-2xl mx-auto py-10 h-screen flex flex-col">
                 <div className="bg-white rounded-lg shadow-sm flex flex-col h-full">
-                    {/* Header - Fixed */}
-                    <div className="flex items-center justify-between p-8 border-b border-gray-200 flex-shrink-0">
+                    <div className="flex items-center justify-between p-8 border-gray-200 flex-shrink-0">
                         <div className="flex items-center gap-4">
                             <Button variant="ghost" size="icon" className="text-[#1d1f20]" onClick={handleBack}>
                                 <ChevronLeft size={24} />
                             </Button>
                             <h1 className="text-2xl font-semibold text-[#1d1f20]">Apply Front End at Rakamin</h1>
                         </div>
-                        <div className="bg-blue-100 text-blue-700 px-3 py-1 rounded text-sm font-medium flex items-center gap-2">
+                        <div className="px-3 py-1 rounded text-sm font-medium flex items-center gap-2">
                             <span className="text-lg">ℹ️</span>
                             This field required to fill
                         </div>
                     </div>
 
                     <form onSubmit={onSubmit} className="flex flex-col flex-1 overflow-hidden">
-                        {/* Scrollable Content - Takes remaining space */}
                         <div className="flex-1 overflow-y-auto px-8 py-6 space-y-6">
-                            {/* Required Label */}
                             <div className="text-[#e11428] font-semibold text-sm">* Required</div>
-                            
-                            {/* Photo Profile Section */}
                             <Field>
                                 <FieldLabel className="text-[#1d1f20] font-medium">Photo Profile</FieldLabel>
                                 <div className="flex flex-col gap-4 mt-3">
