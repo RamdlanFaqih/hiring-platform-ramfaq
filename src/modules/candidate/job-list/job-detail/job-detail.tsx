@@ -37,7 +37,7 @@ const JobDetail = ({ job, onApply }: JobDetailProps ) => {
         </div>
         <button
           onClick={() => onApply?.(job)}
-          className="bg-[#fbc037] hover:bg-[#fdc039] text-[#1d1f20] font-semibold px-6 py-2 rounded transition-colors flex-shrink-0"
+          className="bg-[#fbc037] hover:bg-[#fdc039] text-[#1d1f20] font-semibold px-6 py-2 rounded transition-colors flex-shrink-0 cursor-pointer"
         >
           Apply
         </button>

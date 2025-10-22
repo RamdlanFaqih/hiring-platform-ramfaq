@@ -6,9 +6,10 @@ import JobEmpty from '@/components/job-empty'
 import PromoCard from '@/components/promo-card'
 import { Search } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import React from 'react'
+import React, { useEffect } from 'react'
 import useJobList from './job-list.hook'
 import { useJobStore } from '@/store/adminJobStore'
+import { useAuth } from '@/store/authStore'
 
 type JobCardProps = {
     id: number;
@@ -20,8 +21,9 @@ type JobCardProps = {
 }
 const JobList = () => {
     const router = useRouter()
-    const {form, onSubmit, open, setOpen} = useJobList()
+    const { form, onSubmit, open, setOpen } = useJobList()
     const jobsFromStore = useJobStore((s) => s.jobs)
+    const { role } = useAuth()
 
 
     const handleManageJob = (id: number) => {
@@ -35,6 +37,21 @@ const JobList = () => {
         title: j.jobName,
         salary: `Rp${j.salaryMin.toLocaleString('id-ID')} - Rp${j.salaryMax.toLocaleString('id-ID')}`,
     }))
+
+    useEffect(() => {
+        // if no role -> send to login
+        if (!role) {
+            router.replace('/')
+            return
+        }
+        // if role is not admin -> redirect to their area
+        if (role !== 'admin') {
+            router.replace('/job-list')
+        }
+    }, [role, router])
+
+    // optionally render a loading state until role is resolved
+    if (!role || role !== 'admin') return <div>Redirecting…</div>
     return (
         <div className="">
             <div className="flex gap-6 p-6 max-w-7xl mx-auto">
@@ -61,7 +78,7 @@ const JobList = () => {
                     <PromoCard onOpenChange={setOpen} />
                 </div>
             </div>
-            {open && <JobCreateForm onSubmit={onSubmit} isOpen={open} onOpenChange={setOpen} formControl={form}  />}
+            {open && <JobCreateForm onSubmit={onSubmit} isOpen={open} onOpenChange={setOpen} formControl={form} />}
         </div>
     )
 }

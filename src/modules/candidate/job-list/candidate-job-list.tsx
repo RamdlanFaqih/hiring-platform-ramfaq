@@ -1,8 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import CandidateJobCard, { Job } from "./job-card/job-card"
 import JobDetail from "./job-detail/job-detail"
+import { useRouter } from "next/navigation"
+import { useAuth } from "@/store/authStore"
 
 const jobsData = [
     {
@@ -141,16 +143,40 @@ const jobsData = [
 ]
 
 
+
+
+
 const CandidateJobList = () => {
     const [activeJobId, setActiveJobId] = useState(1)
     const activeJob = jobsData.find((j) => j.id === activeJobId) ?? null
+    const {role} = useAuth()
+
+    const router = useRouter()
 
     const handleApply = (job: Job) => {
-        console.log("Applying for:", job)
+        router.push(`/job-list/${job.id}`)
     }
+
+    useEffect(() => {
+        if (!role) {
+            router.replace('/')
+            return
+        }
+        if (role !== 'candidate') {
+            router.replace('/dashboard')
+        }
+    }, [role, router])
+
+    if (!role || role !== 'candidate') return <div>Redirecting…</div>
 
     return (
         <div>
+            <header className="bg-white border-b border-[#e0e0e0] px-6 py-4 flex justify-between items-center">
+                <h1 className="text-2xl font-semibold text-[#1d1f20]">Job List</h1>
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#01959f] to-[#43936c] flex items-center justify-center text-white font-semibold">
+                    A
+                </div>
+            </header>
             <main className="flex gap-6 p-6 max-w-7xl mx-auto h-[calc(100vh-80px)]">
                 <CandidateJobCard jobs={jobsData} activeJobId={activeJobId} onSelectJob={setActiveJobId} />
 
