@@ -20,7 +20,7 @@ The application features a clean, modern UI with role-based access control and f
 
 ### Styling
 - **TailwindCSS 4** - Utility-first CSS framework
-- **Radix UI** - Headless UI components
+- **Radix UI / Shadcn UI** - Headless UI components
 - **Lucide React** - Icon library
 - **class-variance-authority & clsx** - Dynamic className utilities
 
@@ -34,20 +34,18 @@ The application features a clean, modern UI with role-based access control and f
 - **Zod** - Schema validation
 - **@hookform/resolvers** - Form validation integration
 
-### AI/ML Features
+### Recognition Features
 - **MediaPipe Hands** - Hand landmark detection
-- **TensorFlow.js** - Machine learning in the browser
 - Hand gesture recognition for profile photo capture (three fingers → two fingers → one finger countdown)
 
 ### UI Components
-- **Radix UI primitives** - Checkbox, Dialog, Label, Radio Group, Select, Separator
+- **Shadcn UI**
 - **Sonner** - Toast notifications
 - Custom components built with Radix UI + TailwindCSS
 
 ### Development Tools
 - **ESLint** - Code linting
 - **Turbopack** - Fast bundler (Next.js dev server)
-- **PostCSS** - CSS processing
 
 ## How to Run Locally
 
@@ -101,7 +99,7 @@ The application uses a simple authentication system with the following credentia
 ### Admin Features
 - Create new job postings with job name, description, and salary range
 - View list of all job postings
-- Manage job details and candidates
+- View list of candidates
 
 ### Candidate Features
 - Browse available job listings
